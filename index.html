@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171a1f"><title>OSINT Report Studio</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header class="topbar">
+ <div class="brand"><span class="mark">O</span><span>OSINT <small>REPORT STUDIO</small></span></div>
+ <input id="projectName" value="Новый отчёт" aria-label="Название проекта">
+ <div class="top-actions"><span id="saveStatus">Сохранено</span><button id="themeToggle" title="Сменить тему">◐</button><button data-action="undo" title="Отменить">↶</button><button data-action="redo" title="Повторить">↷</button><button data-action="preview" class="desktop">Просмотр</button><button data-action="export" class="accent">Экспорт PDF</button></div>
+</header>
+<div class="app-shell">
+ <aside class="left-panel" id="leftPanel">
+  <div class="panel-tabs"><button class="active" data-tab="pages">Страницы</button><button data-tab="add">Элементы</button><button data-tab="start">С нуля</button></div>
+  <section class="tab-body active" id="tab-pages"><div class="section-head">Страницы <button data-action="addPage">＋</button></div><div id="pageList"></div></section>
+  <section class="tab-body" id="tab-add"><div class="tool-grid">
+   <button data-add="heading">Заголовок</button><button data-add="text">Текстовый блок</button><button data-add="image">Изображение</button><button data-add="table">Таблица</button><button data-add="source">Источник</button><button data-add="quote">Цитата</button><button data-add="timeline">Хронология</button><button data-add="osint">Карточка объекта</button><button data-add="line">Линия</button>
+  </div><div class="section-head templates-head">Шаблоны</div><div class="template-list"><button data-template="minimal">Минималистичный отчёт</button><button data-template="analytic">Аналитический отчёт</button><button data-template="geoint">GEOINT-отчёт</button></div></section>
+  <section class="tab-body" id="tab-start"><p class="muted small">Сначала соберите сведения в форме. Затем создайте из них аккуратно оформленный многостраничный черновик, который можно продолжить редактировать.</p>
+   <label class="field">Название расследования<input id="draftTitle" placeholder="Например, анализ домена"></label>
+   <label class="field">Автор<input id="draftAuthor" placeholder="Имя или псевдоним"></label>
+   <label class="field">Дата<input id="draftDate" type="date"></label>
+   <label class="field">Цель исследования<textarea id="draftGoal" placeholder="Что требуется установить?"></textarea></label>
+   <label class="field">Объект исследования<textarea id="draftTarget" placeholder="Домен, аккаунт, организация…"></textarea></label>
+   <label class="field">Собранная информация<textarea id="draftInfo" rows="5" placeholder="Факты, наблюдения, даты, ссылки — один пункт на строку"></textarea></label>
+   <label class="field">Выводы<textarea id="draftConclusion" placeholder="К чему пришли по результатам проверки?"></textarea></label>
+   <button id="generateDraft" class="wide accent">Создать черновик отчёта</button>
+  </section>
+ </aside>
+ <main class="editor">
+  <div class="editor-bar"><div class="bar-group"><button data-action="zoomOut">−</button><span id="zoomLabel">100%</span><button data-action="zoomIn">＋</button><button data-action="fit">По ширине</button></div><div class="bar-group"><button data-action="background">Фон листа</button><button data-action="grid">Сетка</button><button data-action="preview" class="desktop">Предпросмотр</button></div></div>
+  <div id="canvasScroll"><div id="pageCanvas" class="page-canvas"></div></div>
+ </main>
+ <aside class="right-panel" id="rightPanel"><div class="section-head">Свойства <span id="selectionName" class="muted">Ничего не выбрано</span></div><div id="properties" class="properties"><p class="muted small">Выберите объект, чтобы изменить его параметры.</p></div>
+  <div class="right-divider"></div><div class="section-head">Оформление листа</div>
+  <div class="page-settings">
+   <label class="field">Цвет фона<input id="pageColor" type="color" value="#ffffff"></label>
+   <label class="field">Фоновое изображение<input id="pageImage" type="file" accept="image/png,image/jpeg,image/webp"></label>
+   <label class="field">Прозрачность фона <output id="bgOpacityLabel">100%</output><input id="bgOpacity" type="range" min="5" max="100" value="100"></label>
+   <label class="field">Положение фона<select id="bgFit"><option value="cover">Заполнить лист</option><option value="contain">Вписать целиком</option><option value="stretch">Растянуть</option></select></label>
+   <button id="clearBackground" class="wide">Убрать изображение</button>
+  </div>
+ </aside>
+</div>
+<nav class="mobile-nav"><button data-mobile="pages"><b>▤</b>Страницы</button><button data-mobile="add"><b>＋</b>Добавить</button><button data-mobile="start"><b>✎</b>С нуля</button><button data-mobile="properties"><b>☷</b>Свойства</button></nav>
+<div id="backgroundDialog" class="dialog hidden"><div class="dialog-card"><button class="dialog-close" data-close="backgroundDialog">×</button><h3>Фон страницы</h3><p class="muted small">Выбери цвет или изображение. Фон сохраняется в проекте и отображается при печати.</p><label class="field">Цвет<input id="dialogColor" type="color" value="#ffffff"></label><label class="field">Загрузить изображение<input id="dialogImage" type="file" accept="image/png,image/jpeg,image/webp"></label><label class="field">Прозрачность<input id="dialogOpacity" type="range" min="5" max="100" value="100"></label><button class="accent wide" data-close="backgroundDialog">Готово</button></div></div>
+<div id="previewModal" class="dialog hidden"><div class="preview-card"><button class="dialog-close" data-close="previewModal">×</button><div id="previewContent"></div></div></div>
+<div id="telegramPopup" class="telegram-popup"><button class="popup-close" aria-label="Закрыть">×</button><strong>Материалы OSINT</strong><p>Обновления проекта и полезные инструменты в Telegram.</p><a href="https://t.me/+HphbJWHr-Ag2MTFi" target="_blank" rel="noopener">Открыть канал ↗</a></div>
+<input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><script src="app.js"></script></body></html>
